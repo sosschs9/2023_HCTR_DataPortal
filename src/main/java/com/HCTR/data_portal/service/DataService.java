@@ -15,38 +15,38 @@ import java.util.*;
 @RequiredArgsConstructor
 public class DataService {
     private final DataRepository dataRepository;
-    public int requestNormalVO(NormalVO normalVO){
+    public int uploadNormalVO(NormalVO normalVO){
         DataDTO dataDTO = normalVO.buildData(normalVO);
         NormalDTO normalDTO = normalVO.buildNormal(normalVO);
 
         // Data Table 저장
         int dataInsert = dataRepository.insertData(dataDTO);
-        if (dataInsert < 0) return -1;
+        if (dataInsert < 0) return -1;  // Data Table 업로드 실패
 
         int DataId = dataRepository.findLastIndex();
         normalDTO.setDataId(DataId);
 
         // Normal_Data Table 저장
         int normalInsert = dataRepository.insertNormal(normalDTO);
-        if (normalInsert < 0) return -2;
+        if (normalInsert < 0) return -2;    // Normal_Data Table 업로드 실패
 
         // 업로드 성공
         return DataId;
     }
-    public int requestEarthQuakeVO(EarthQuakeVO earthQuakeVO){
+    public int uploadEarthQuakeVO(EarthQuakeVO earthQuakeVO){
         DataDTO dataDTO = earthQuakeVO.buildData(earthQuakeVO);
         EarthQuakeDTO earthQuakeDTO = earthQuakeVO.buildEarthQuake(earthQuakeVO);
 
         // Data Table 저장
         int dataInsert = dataRepository.insertData(dataDTO);
-        if (dataInsert < 0) return -1;
+        if (dataInsert < 0) return -1;  // Data Table 업로드 실패
 
         int DataId = dataRepository.findLastIndex();
         earthQuakeDTO.setDataId(DataId);
 
         // EarthQuake_Data Table 저장
         int earthQuakeInsert = dataRepository.insertEarthQuake(earthQuakeDTO);
-        if (earthQuakeInsert < 0) return -2;
+        if (earthQuakeInsert < 0) return -2;    // Normal_Data Table 업로드 실패
 
         // 업로드 성공
         return DataId;

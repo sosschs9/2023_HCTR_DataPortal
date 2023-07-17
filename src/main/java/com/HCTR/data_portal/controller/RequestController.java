@@ -18,6 +18,7 @@ import java.util.*;
 public class RequestController {
     private final RequestService requestService;
 
+    // 승인 요청하기 (유저)
     @PostMapping("/request")
     public ResponseEntity<?> requestData(
             @RequestHeader("userId") String userId,
@@ -25,6 +26,7 @@ public class RequestController {
         System.out.println("Request Data");
         Map<String, Object> msg = new HashMap<>();
 
+        // DB에 저장할 requestDTO 인스턴스 생성
         RequestDTO requestDTO = requestService.buildRequest(userId, dataDTO);
         int res = requestService.insertRequest(requestDTO);
 
@@ -35,15 +37,15 @@ public class RequestController {
             msg.put("Error", "Data Request Failure");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
         }
-
     }
-
+    
+    // 요청 승인하기 (관리자)
     @PutMapping("/request")
     public ResponseEntity<?> acceptRequest(@RequestBody RequestDTO requestDTO){
-        // RequestId에 해당하는 요청 상태 Complete으로 변경
         System.out.println("Accept Request");
         Map<String, Object> msg = new HashMap<>();
 
+        // RequestId에 해당하는 요청 상태 Complete로 변경
         int res = requestService.acceptRequest(requestDTO);
 
         if (res > 0) {
@@ -59,13 +61,14 @@ public class RequestController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
     }
 
+    // 요청 목록 불러오기
+    // 관리자 -> 모든 유저의 요청 목록
     @GetMapping("/request")
     public ResponseEntity<?> findAllRequest(@RequestHeader("userId") String userId) {
         System.out.println("Find All Request List");
         Map<String, Object> msg = new HashMap<>();
 
         List<RequestItem> requestList = requestService.findAllRequestById(userId);
-        System.out.println(requestList);
 
         return ResponseEntity.status(HttpStatus.OK).body(new DataList<>(requestList.size(), requestList));
     }

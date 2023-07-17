@@ -14,7 +14,9 @@ import java.util.*;
 public class DataRepository {
     private final SqlSessionTemplate sql;
     public int findLastIndex(){
-        return sql.selectOne("data.findLastDataIndex");
+        Integer res = sql.selectOne("data.findLastReqIndex");
+        if (res == null) return 0;
+        else return res;
     }
     public int insertData(DataDTO dataDTO){
         return sql.insert("data.insertData", dataDTO);

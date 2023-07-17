@@ -18,15 +18,15 @@ import java.util.*;
 public class DataController {
     private final DataService dataService;
 
+    // 지진 발생 시 데이터 저장하기
     @PostMapping("/data-earthquake")
     public ResponseEntity<?> uploadEarthQuake(@RequestBody EarthQuakeVO earthQuakeVO) {
         System.out.println("Upload EarthQuake Data");
         Map<String, Object> msg = new HashMap<>();
 
         // base64인코딩 된 이미지 파일을 디코딩하여 hdfs에 저장하는 과정 필요함.
-        // 이를 서비스에서 할지 컨트롤러에서 할지
 
-        int result = dataService.requestEarthQuakeVO(earthQuakeVO);
+        int result = dataService.uploadEarthQuakeVO(earthQuakeVO);
 
         if (result > 0) {
             // result => DataId를 가리킴
@@ -45,15 +45,15 @@ public class DataController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
     }
 
+    // 평시 데이터 저장하기
     @PostMapping("/data-normal")
     public ResponseEntity<?> uploadNormal(@RequestBody NormalVO normalVO) {
         System.out.println("Upload Normal Data");
         Map<String, Object> msg = new HashMap<>();
 
         // base64인코딩 된 이미지 파일을 디코딩하여 hdfs에 저장하는 과정 필요함.
-        // 이를 서비스에서 할지 컨트롤러에서 할지
 
-        int res = dataService.requestNormalVO(normalVO);
+        int res = dataService.uploadNormalVO(normalVO);
 
         if (res > 0) {
             // result => DataId를 가리킴
@@ -71,8 +71,10 @@ public class DataController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
     }
 
+    // 데이터 목록 불러오기
     @GetMapping("/data")
     public ResponseEntity<?> findAllData(){
+        System.out.println("Find Data List");
         List<DataDTO> dataList = dataService.findAllData();
 
         System.out.println(dataList.get(0).getEventDate());
@@ -80,15 +82,16 @@ public class DataController {
         return ResponseEntity.status(HttpStatus.OK).body(new DataList<>(dataList.size(), dataList));
     }
 
-
+    // 데이터 상세 조회
     @GetMapping("/data/{DataId}")
     public ResponseEntity<?> findDataById(@PathVariable("DataId") int DataId){
+        System.out.println("About Data Id: " + DataId);
         // 제목, 위치, 상세 위치, 위도, 경도, 규모
         // 맵, 시계열 이미지 파일 가져오기
         // view 횟수 증가
         return null;
     }
 
-    // 파일 다운로드 메소드 작성 필요
+    // 데이터 다운로드
     // PUT /dataportal/mypage/data
 }
