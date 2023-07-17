@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+        <typeAlias type="com.HCTR.data_portal.dto.UserDTO" alias="User"></typeAlias>
+        <typeAlias type="com.HCTR.data_portal.dto.EarthQuakeDTO" alias="EarthQuake"></typeAlias>
+        <typeAlias type="com.HCTR.data_portal.dto.NormalDTO" alias="Normal"></typeAlias>
+        <typeAlias type="com.HCTR.data_portal.dto.DataDTO" alias="Data"></typeAlias>
+        <typeAlias type="com.HCTR.data_portal.dto.RequestDTO" alias="Request"></typeAlias>
+        <typeAlias type="com.HCTR.data_portal.vo.Response.RequestItem" alias="RequestItem"></typeAlias>
+    </typeAliases>
+</configuration>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="request">
+    <select id="findLastReqIndex" resultType="Integer">
+        select Id from REQUEST ORDER BY Id DESC LIMIT 1;
+    </select>
+    <insert id="insertRequest" parameterType="Request">
+        insert into REQUEST
+        values (#{Id}, #{ReqDate}, #{ReqStatus}, #{IsDownload}, #{UserId}, #{DataId}, #{ManagerId});
+    </insert>
+    <update id="acceptRequest" parameterType="Request">
+        update REQUEST
+        set ReqStatus = "Complete"
+        where Id = #{Id}
+    </update>
+    <select id="findAllRequest" resultType="RequestItem">
+        select ReqStatus, DataId, DataType, Title, UserId, TO_CHAR(ReqDate, 'YYYY-MM-DD')
+        from REQUEST left join DATA
+        on REQUEST.DataId = DATA.Id
+    </select>
+    <select id="findAllRequestById" parameterType="String" resultType="RequestItem">
+        select ReqStatus, DataId, DataType, Title, UserId, TO_CHAR(ReqDate, 'YYYY-MM-DD')
+        from REQUEST left join DATA
+        on REQUEST.DataId = DATA.Id
+        where UserId = #{userId};
+    </select>
+
+</mapper>
