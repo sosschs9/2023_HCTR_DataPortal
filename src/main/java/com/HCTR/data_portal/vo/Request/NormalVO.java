@@ -3,6 +3,7 @@ package com.HCTR.data_portal.vo.Request;
 import com.HCTR.data_portal.dto.DataDTO;
 import com.HCTR.data_portal.dto.NormalDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.Getter;
@@ -21,22 +22,22 @@ import java.util.Date;
         "Title", "HdfsFilePath", "Location", "DetailLocation",
         "EventDate", "Description", "DescriptionImage", "Chart" })
 public class NormalVO {
-    @JsonSetter("Title")
+    @JsonProperty("Title")
     private String Title;
-    @JsonSetter("HdfsFilePath")
+    @JsonProperty("HdfsFilePath")
     private String HdfsFilePath;
-    @JsonSetter("Location")
+    @JsonProperty("Location")
     private String Location;
-    @JsonSetter("DetailLocation")
+    @JsonProperty("DetailLocation")
     private String DetailLocation;
-    @JsonSetter("EventDate")
+    @JsonProperty("EventDate")
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private Date EventDate;
-    @JsonSetter("Description")
+    @JsonProperty("Description")
     private String Description;
-    @JsonSetter("DescriptionImage")
+    @JsonProperty("DescriptionImage")
     private String DescriptionImage;
-    @JsonSetter("Chart")
+    @JsonProperty("Chart")
     private String Chart;
 
 

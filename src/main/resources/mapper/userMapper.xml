@@ -3,9 +3,23 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="user">
+    <insert id="signup" parameterType="User">
+        insert into USER(Id, UserName, Password, Email, Organization, Role)
+        values (#{Id}, #{UserName}, #{Password}, #{Email}, #{Organization}, #{Role})
+    </insert>
+    <select id="findLastUserIndex" resultType="Integer">
+        select Id from USER ORDER BY Id DESC LIMIT 1;
+    </select>
+    <select id="checkEmail" parameterType="String" resultType="String">
+        select Email from USER where Email = #{email}
+    </select>
+    <select id="checkId" parameterType="String" resultType="String">
+        select Id from USER where Id = #{id}
+    </select>
     <select id="checkRole" parameterType="String" resultType="Integer">
-        select Role
-        from USER
-        where Id = #{userId};
+        select Role from USER where Id = #{userId};
+    </select>
+    <select id="checkPW" parameterType="User" resultType="User">
+        select * from USER where Id = #{Id} and Password = #{Password};
     </select>
 </mapper>

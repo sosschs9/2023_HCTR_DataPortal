@@ -11,8 +11,20 @@ import org.springframework.stereotype.Repository;
 public class UserRepository {
     private final SqlSessionTemplate sql;
 
+    public int signup(UserDTO userDTO) {
+        return sql.insert("user.signup", userDTO);
+    }
+    public String checkEmail(String email) {
+        return sql.selectOne("user.checkEmail", email);
+    }
+    public String checkId(String id) {
+        return sql.selectOne("user.checkId", id);
+    }
     public int checkRole(String userId) {
         return sql.selectOne("user.checkRole", userId);
+    }
+    public UserDTO checkPW(UserDTO userDTO) {
+        return sql.selectOne("user.checkPW", userDTO);
     }
 
 }

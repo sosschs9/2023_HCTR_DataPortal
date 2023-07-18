@@ -18,30 +18,30 @@ import java.util.Date;
         "Title", "HdfsFilePath", "Location", "DetailLocation", "EventDate", "Latitude",
         "Longtitude", "Scale", "MapImage", "TimeSeries", "SensorInfo", "AdditionalData"})
 public class EarthQuakeVO {
-    @JsonSetter("Title")
+    @JsonProperty("Title")
     private String Title;
-    @JsonSetter("HdfsFilePath")
+    @JsonProperty("HdfsFilePath")
     private String HdfsFilePath;
-    @JsonSetter("Location")
+    @JsonProperty("Location")
     private String Location;
-    @JsonSetter("DetailLocation")
+    @JsonProperty("DetailLocation")
     private String DetailLocation;
-    @JsonSetter("EventDate")
+    @JsonProperty("EventDate")
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private Date EventDate;
-    @JsonSetter("Latitude")
+    @JsonProperty("Latitude")
     private float Latitude;
-    @JsonSetter("Longtitude")
+    @JsonProperty("Longtitude")
     private float Longtitude;
-    @JsonSetter("Scale")
+    @JsonProperty("Scale")
     private float Scale;
-    @JsonSetter("MapImage")
+    @JsonProperty("MapImage")
     private String MapImage;
-    @JsonSetter("TimeSeries")
+    @JsonProperty("TimeSeries")
     private String TimeSeries;
-    @JsonSetter("AdditionalData")
+    @JsonProperty("AdditionalData")
     private String AdditionalData;
-    @JsonSetter("SensorInfo")
+    @JsonProperty("SensorInfo")
     private String SensorInfo;
 
     public EarthQuakeVO(
