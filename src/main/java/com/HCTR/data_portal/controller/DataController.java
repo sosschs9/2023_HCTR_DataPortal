@@ -9,7 +9,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.*;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @RestController
@@ -20,11 +26,24 @@ public class DataController {
 
     // 지진 발생 시 데이터 저장하기
     @PostMapping("/data-earthquake")
-    public ResponseEntity<?> uploadEarthQuake(@RequestBody EarthQuakeVO earthQuakeVO) {
+    public ResponseEntity<?> uploadEarthQuake(
+            @RequestPart("text") EarthQuakeVO earthQuakeVO,
+            @RequestPart("file") MultipartFile[] fileDataArr) throws IOException {
         System.out.println("Upload EarthQuake Data");
         Map<String, Object> msg = new HashMap<>();
 
-        // base64인코딩 된 이미지 파일을 디코딩하여 hdfs에 저장하는 과정 필요함.
+        // 이거는 컨트롤러에 냅둘지 ?
+        earthQuakeVO.setMapImage(fileDataArr[0].getOriginalFilename());
+        earthQuakeVO.setTimeSeries(fileDataArr[1].getOriginalFilename());
+        earthQuakeVO.setSensorInfo(fileDataArr[2].getOriginalFilename());
+
+        // 한글 파일일 경우 인코딩 한 후에 디코딩한 파일명을 받아와야 함.
+        String encodedFileName = URLEncoder.encode(fileDataArr[0].getOriginalFilename(), StandardCharsets.UTF_8.toString());
+        String decodedFileName = URLDecoder.decode(encodedFileName, StandardCharsets.UTF_8.toString());
+
+        // 원하는 파일 위치 + 파일명
+        // String filePath = "C:\\test\\" + decodedFileName;
+        // fileDataArr[0].transferTo(new File(filePath));
 
         int result = dataService.uploadEarthQuakeVO(earthQuakeVO);
 
@@ -47,12 +66,17 @@ public class DataController {
 
     // 평시 데이터 저장하기
     @PostMapping("/data-normal")
-    public ResponseEntity<?> uploadNormal(@RequestBody NormalVO normalVO) {
+    public ResponseEntity<?> uploadNormal(
+            @RequestPart("text") NormalVO normalVO,
+            @RequestPart("file") MultipartFile[] fileDataArr) throws IOException {
         System.out.println("Upload Normal Data");
         Map<String, Object> msg = new HashMap<>();
 
         // base64인코딩 된 이미지 파일을 디코딩하여 hdfs에 저장하는 과정 필요함.
+        normalVO.setDescriptionImage(fileDataArr[0].getOriginalFilename());
+        normalVO.setChart(fileDataArr[1].getOriginalFilename());
 
+        System.out.println(normalVO);
         int res = dataService.uploadNormalVO(normalVO);
 
         if (res > 0) {
@@ -91,6 +115,7 @@ public class DataController {
         // view 횟수 증가
         return null;
     }
+
 
     // 데이터 다운로드
     // PUT /dataportal/mypage/data

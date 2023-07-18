@@ -2,27 +2,47 @@ package com.HCTR.data_portal.vo.Request;
 
 import com.HCTR.data_portal.dto.DataDTO;
 import com.HCTR.data_portal.dto.EarthQuakeDTO;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
+@Setter
 @ToString
+@NoArgsConstructor
+@JsonPropertyOrder({
+        "Title", "HdfsFilePath", "Location", "DetailLocation", "EventDate", "Latitude",
+        "Longtitude", "Scale", "MapImage", "TimeSeries", "SensorInfo", "AdditionalData"})
 public class EarthQuakeVO {
-    private final String Title;
-    private final String HdfsFilePath;
-    private final String Location;
-    private final String DetailLocation;
-    private final Date EventDate;
-    private final float Latitude;
-    private final float Longtitude;
-    private final float Scale;
-    private final String MapImage;
-    private final String TimeSeries;
-    private final String AdditionalData;
-    private final String SensorInfo;
+    @JsonSetter("Title")
+    private String Title;
+    @JsonSetter("HdfsFilePath")
+    private String HdfsFilePath;
+    @JsonSetter("Location")
+    private String Location;
+    @JsonSetter("DetailLocation")
+    private String DetailLocation;
+    @JsonSetter("EventDate")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
+    private Date EventDate;
+    @JsonSetter("Latitude")
+    private float Latitude;
+    @JsonSetter("Longtitude")
+    private float Longtitude;
+    @JsonSetter("Scale")
+    private float Scale;
+    @JsonSetter("MapImage")
+    private String MapImage;
+    @JsonSetter("TimeSeries")
+    private String TimeSeries;
+    @JsonSetter("AdditionalData")
+    private String AdditionalData;
+    @JsonSetter("SensorInfo")
+    private String SensorInfo;
 
     public EarthQuakeVO(
             String title, String hdfsFilePath, String location, String detailLocation,
