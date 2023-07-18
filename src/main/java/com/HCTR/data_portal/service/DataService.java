@@ -19,12 +19,13 @@ public class DataService {
         DataDTO dataDTO = normalVO.buildData(normalVO);
         NormalDTO normalDTO = normalVO.buildNormal(normalVO);
 
+        int DataId = dataRepository.findLastIndex() + 1;
+        dataDTO.setId(DataId);
+        normalDTO.setDataId(DataId);
+
         // Data Table 저장
         int dataInsert = dataRepository.insertData(dataDTO);
         if (dataInsert < 0) return -1;  // Data Table 업로드 실패
-
-        int DataId = dataRepository.findLastIndex();
-        normalDTO.setDataId(DataId);
 
         // Normal_Data Table 저장
         int normalInsert = dataRepository.insertNormal(normalDTO);
@@ -37,12 +38,13 @@ public class DataService {
         DataDTO dataDTO = earthQuakeVO.buildData(earthQuakeVO);
         EarthQuakeDTO earthQuakeDTO = earthQuakeVO.buildEarthQuake(earthQuakeVO);
 
+        int DataId = dataRepository.findLastIndex() + 1;
+        dataDTO.setId(DataId);
+        earthQuakeDTO.setDataId(DataId);
+
         // Data Table 저장
         int dataInsert = dataRepository.insertData(dataDTO);
         if (dataInsert < 0) return -1;  // Data Table 업로드 실패
-
-        int DataId = dataRepository.findLastIndex();
-        earthQuakeDTO.setDataId(DataId);
 
         // EarthQuake_Data Table 저장
         int earthQuakeInsert = dataRepository.insertEarthQuake(earthQuakeDTO);
@@ -55,5 +57,7 @@ public class DataService {
     public List<DataDTO> findAllData(){
         return dataRepository.findAllData();
     }
+
+
 
 }

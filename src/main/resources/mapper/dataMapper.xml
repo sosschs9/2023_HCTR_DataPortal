@@ -7,8 +7,8 @@
         select Id from DATA ORDER BY Id DESC LIMIT 1;
     </select>
     <insert id="insertData" parameterType="Data">
-        insert into DATA(HdfsFilePath, Title, EventDate, DataType, Location, DetailLocation, ManagerId)
-        values (#{HdfsFilePath}, #{Title}, #{EventDate}, #{DataType}, #{Location}, #{DetailLocation}, #{ManagerId});
+        insert into DATA(Id, HdfsFilePath, Title, EventDate, DataType, Location, DetailLocation, ManagerId)
+        values (#{Id}, #{HdfsFilePath}, #{Title}, #{EventDate}, #{DataType}, #{Location}, #{DetailLocation}, #{ManagerId});
     </insert>
     <insert id="insertNormal" parameterType="Normal">
         insert into NORMAL_DATA(Description, DescriptionImage, Chart, DataId)
