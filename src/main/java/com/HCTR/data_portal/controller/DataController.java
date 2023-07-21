@@ -42,8 +42,12 @@ public class DataController {
         String decodedFileName = URLDecoder.decode(encodedFileName, StandardCharsets.UTF_8.toString());
 
         // 원하는 파일 위치 + 파일명
+        // pk : 데이터의 총 갯수 +1
+        //String filePath = "/EQ/2021/" + pk + "text에 있는 location"
         // String filePath = "C:\\test\\" + decodedFileName;
         // fileDataArr[0].transferTo(new File(filePath));
+        // File file1 = New File([syj);
+
 
         int result = dataService.uploadEarthQuakeVO(earthQuakeVO);
 
