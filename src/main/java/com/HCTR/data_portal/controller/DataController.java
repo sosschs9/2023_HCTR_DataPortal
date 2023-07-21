@@ -2,7 +2,7 @@ package com.HCTR.data_portal.controller;
 
 import com.HCTR.data_portal.dto.DataDTO;
 import com.HCTR.data_portal.service.DataService;
-import com.HCTR.data_portal.service.HdfsService;
+import com.HCTR.data_portal.service.MyService;
 import com.HCTR.data_portal.vo.Request.EarthQuakeVO;
 import com.HCTR.data_portal.vo.Request.NormalVO;
 import com.HCTR.data_portal.vo.Response.DataList;
@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -24,13 +23,14 @@ import java.util.*;
 @RequestMapping("/dataportal")
 public class DataController {
     private final DataService dataService;
-    private final HdfsService hdfsService;
+//    private final HdfsService hdfsService;
+    private  final MyService myService;
 
     // 지진 발생 시 데이터 저장하기
     @PostMapping("/data-earthquake")
     public ResponseEntity<?> uploadEarthQuake(
             @RequestPart("text") EarthQuakeVO earthQuakeVO,
-            @RequestPart("file") MultipartFile[] fileDataArr) throws IOException {
+            @RequestPart("file") MultipartFile[] fileDataArr) throws Exception {
         System.out.println("Upload EarthQuake Data");
         Map<String, Object> msg = new HashMap<>();
 
@@ -53,7 +53,10 @@ public class DataController {
 
 //        int result = dataService.uploadEarthQuakeVO(earthQuakeVO);
 
-        hdfsService.uploadHdfs(fileDataArr[0]);
+//        // hadoop에  데이터 업로드
+//        hdfsService.uploadHdfs(fileDataArr[0]);
+        myService.doSomething();
+        myService.uploadFileToHDFS(fileDataArr[0], "/test/" + decodedFileName);
 
 //        if (result > 0) {
 //            // result => DataId를 가리킴
