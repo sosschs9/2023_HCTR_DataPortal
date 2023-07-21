@@ -24,8 +24,8 @@ public class HdfsService {
     public void uploadHdfs(MultipartFile file) {
         try {
             System.out.println("upload hdfs file");
-            FileSystem hdfs = FileSystem.get(URI.create("hdfs://155.230.118.225:9000"), hadoopConfiguration);
-            Path outputPath = new Path("/user/test");
+            FileSystem hdfs = FileSystem.get(hadoopConfiguration);
+            Path outputPath = new Path("/test");
 
 
             if (hdfs.exists(outputPath)){

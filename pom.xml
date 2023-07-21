@@ -173,15 +173,9 @@
     </dependency>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-hdfs-client</artifactId>
-      <version>3.3.6</version>
+      <artifactId>hadoop-client</artifactId>
+      <version>3.2.4</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-core</artifactId>
-      <version>1.2.1</version>
-    </dependency>
-
 
     <!-- Spring Security Core -->
     <dependency>
@@ -189,27 +183,25 @@
       <artifactId>spring-security-core</artifactId>
       <version>${org.springsecurity-version}</version>
     </dependency>
-
     <!-- Spring Security Config -->
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-config</artifactId>
       <version>${org.springsecurity-version}</version>
     </dependency>
-
     <!-- Spring Security Web -->
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-web</artifactId>
       <version>${org.springsecurity-version}</version>
     </dependency>
-
     <!-- Spring Security JSP Custom Tags -->
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-taglibs</artifactId>
       <version>${org.springsecurity-version}</version>
     </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -224,8 +216,6 @@
       <version>6.0.11</version>
       <scope>test</scope>
     </dependency>
-
-
   </dependencies>
 
   <build>

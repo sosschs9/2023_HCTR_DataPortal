@@ -19,7 +19,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 @Configuration
 @ComponentScan(basePackages = {"com.HCTR.data_portal.repository", "com.HCTR.data_portal.service"})
 @EnableTransactionManagement
-@Import(HadoopConfiguration.class)
+@Import(HadoopConfig.class)
 public class ApplicationConfig{
 
     @Bean
@@ -60,6 +60,11 @@ public class ApplicationConfig{
         resolver.setDefaultEncoding("UTF-8");
         resolver.setMaxUploadSize(10000000);
         return resolver;
+    }
+
+    @Bean
+    public HadoopConfig hadoopConfig() {
+        return new HadoopConfig();
     }
 
 }
