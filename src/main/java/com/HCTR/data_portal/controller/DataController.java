@@ -2,6 +2,7 @@ package com.HCTR.data_portal.controller;
 
 import com.HCTR.data_portal.dto.DataDTO;
 import com.HCTR.data_portal.service.DataService;
+import com.HCTR.data_portal.service.HdfsService;
 import com.HCTR.data_portal.vo.Request.EarthQuakeVO;
 import com.HCTR.data_portal.vo.Request.NormalVO;
 import com.HCTR.data_portal.vo.Response.DataList;
@@ -23,6 +24,7 @@ import java.util.*;
 @RequestMapping("/dataportal")
 public class DataController {
     private final DataService dataService;
+    private final HdfsService hdfsService;
 
     // 지진 발생 시 데이터 저장하기
     @PostMapping("/data-earthquake")
@@ -49,21 +51,23 @@ public class DataController {
         // File file1 = New File([syj);
 
 
-        int result = dataService.uploadEarthQuakeVO(earthQuakeVO);
+//        int result = dataService.uploadEarthQuakeVO(earthQuakeVO);
 
-        if (result > 0) {
-            // result => DataId를 가리킴
-            msg.put("DataId", result);
-            return ResponseEntity.status(HttpStatus.CREATED).body(msg);
-        } else if (result == -1){
-            // Data DB 저장 오류
-            msg.put("Error", "Data Table Insert Failure.");
-        } else if (result == -2) {
-            // Normal DB 저장 오류
-            msg.put("Error", "EarthQuake_Data Table Insert Failure.");
-        } else {
-            msg.put("Error", "File Upload Fail. Check your data file");
-        }
+        hdfsService.uploadHdfs(fileDataArr[0]);
+
+//        if (result > 0) {
+//            // result => DataId를 가리킴
+//            msg.put("DataId", result);
+//            return ResponseEntity.status(HttpStatus.CREATED).body(msg);
+//        } else if (result == -1){
+//            // Data DB 저장 오류
+//            msg.put("Error", "Data Table Insert Failure.");
+//        } else if (result == -2) {
+//            // Normal DB 저장 오류
+//            msg.put("Error", "EarthQuake_Data Table Insert Failure.");
+//        } else {
+//            msg.put("Error", "File Upload Fail. Check your data file");
+//        }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
     }
