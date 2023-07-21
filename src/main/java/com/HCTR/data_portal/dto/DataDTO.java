@@ -1,5 +1,7 @@
 package com.HCTR.data_portal.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -12,15 +14,24 @@ import java.util.Date;
 @Setter
 @ToString
 public class DataDTO {
+    @JsonProperty("Id")
     private int Id;
+    @JsonProperty("Title")
     private String Title;
+    @JsonProperty("HdfsFilePath")
     private String HdfsFilePath;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonProperty("EventDate")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private Date EventDate;
+    @JsonProperty("DataType")
     private int DataType;
+    @JsonProperty("Views")
     private int Views;
+    @JsonProperty("Location")
     private String Location;
+    @JsonProperty("DetailLocation")
     private String DetailLocation;
+    @JsonProperty("ManagerId")
     private String ManagerId;
 
     public DataDTO(

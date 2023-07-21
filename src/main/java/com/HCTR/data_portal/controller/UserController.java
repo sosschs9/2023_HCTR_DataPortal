@@ -10,12 +10,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dataportal")
 public class UserController {
+    private final HttpSession httpSession;
     private final UserService userService;
 
     @PostMapping("/signUp")
@@ -75,10 +77,14 @@ public class UserController {
 
         // 이게 효율적인 방법인지는 모르겟네
         Object res = userService.signin(userDTO);
-        if (res instanceof String) {
+        if (res instanceof UserDTO) {
             // 유저 권한 부여
             // 만약 세션 기반 인증으로 진행하게 되면 HttpSession 부여해야함.
-            msg.put("UserId", res);
+            if (((UserDTO) res).getRole() == 0)
+                httpSession.setAttribute("MANAGER", res);
+            else httpSession.setAttribute("USER", res);
+
+            msg.put("UserId", ((UserDTO) res).getId());
             return ResponseEntity.status(HttpStatus.OK).body(msg);
         } else if (res.equals(-1)){
             msg.put("Error", "The ID does not exist.");

@@ -2,6 +2,7 @@ package com.HCTR.data_portal.controller;
 
 import com.HCTR.data_portal.dto.DataDTO;
 import com.HCTR.data_portal.service.DataService;
+import com.HCTR.data_portal.service.HdfsService;
 import com.HCTR.data_portal.vo.Request.EarthQuakeVO;
 import com.HCTR.data_portal.vo.Request.NormalVO;
 import com.HCTR.data_portal.vo.Response.DataList;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -22,7 +24,9 @@ import java.util.*;
 @RequiredArgsConstructor
 @RequestMapping("/dataportal")
 public class DataController {
+    private final HttpSession httpSession;
     private final DataService dataService;
+    private final HdfsService hdfsService;
 
     // 지진 발생 시 데이터 저장하기
     @PostMapping("/data-earthquake")
@@ -31,6 +35,10 @@ public class DataController {
             @RequestPart("file") MultipartFile[] fileDataArr) throws IOException {
         System.out.println("Upload EarthQuake Data");
         Map<String, Object> msg = new HashMap<>();
+
+        if(httpSession.getAttribute("MANAGER") == null){
+            new Exception();
+        }
 
         // 이거는 컨트롤러에 냅둘지 ?
         earthQuakeVO.setMapImage(fileDataArr[0].getOriginalFilename());
@@ -45,8 +53,10 @@ public class DataController {
         // String filePath = "C:\\test\\" + decodedFileName;
         // fileDataArr[0].transferTo(new File(filePath));
 
-        int result = dataService.uploadEarthQuakeVO(earthQuakeVO);
+        //int result = dataService.uploadEarthQuakeVO(earthQuakeVO);
+        hdfsService.uploadHdfs(fileDataArr[0]);
 
+        /*
         if (result > 0) {
             // result => DataId를 가리킴
             msg.put("DataId", result);
@@ -59,7 +69,7 @@ public class DataController {
             msg.put("Error", "EarthQuake_Data Table Insert Failure.");
         } else {
             msg.put("Error", "File Upload Fail. Check your data file");
-        }
+        }*/
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
     }
@@ -78,6 +88,7 @@ public class DataController {
 
         System.out.println(normalVO);
         int res = dataService.uploadNormalVO(normalVO);
+
 
         if (res > 0) {
             // result => DataId를 가리킴
@@ -101,7 +112,9 @@ public class DataController {
         System.out.println("Find Data List");
         List<DataDTO> dataList = dataService.findAllData();
 
-        System.out.println(dataList.get(0).getEventDate());
+        if(httpSession.getAttribute("MANAGER") == null){
+            new Exception();
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body(new DataList<>(dataList.size(), dataList));
     }
