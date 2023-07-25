@@ -8,7 +8,6 @@ import org.springframework.data.hadoop.config.annotation.builders.HadoopConfigCo
 @Configuration
 @EnableHadoop
 class HadoopConfig extends SpringHadoopConfigurerAdapter {
-
     @Override
     public void configure(HadoopConfigConfigurer config) throws Exception {
         config
@@ -17,11 +16,10 @@ class HadoopConfig extends SpringHadoopConfigurerAdapter {
                 .withProperties()
                 .property("dfs.nameservices", "mycluster")
                 .property("dfs.ha.namenodes.mycluster", "cluster_n1")
-                .property("dfs.namenode.rpc-address.mycluster.cluster_n1", "nameNode1:9000")
+                .property("dfs.namenode.rpc-address.mycluster.cluster_n1", "nameNode1:900")
                 .property(
                         "dfs.client.failover.proxy.provider.mycluster",
                         "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider"
                 );
     }
-
 }

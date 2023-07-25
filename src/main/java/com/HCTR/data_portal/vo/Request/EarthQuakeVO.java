@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Calendar;
 import java.util.Date;
 
 @Getter
@@ -62,33 +63,40 @@ public class EarthQuakeVO {
         this.SensorInfo = sensorInfo;
     }
 
-    public DataDTO buildData(EarthQuakeVO earthQuakeVO) {
+    public DataDTO buildData() {
         DataDTO dataDTO = new DataDTO();
 
-        dataDTO.setHdfsFilePath(earthQuakeVO.getHdfsFilePath());
-        dataDTO.setTitle(earthQuakeVO.getTitle());
-        dataDTO.setEventDate(earthQuakeVO.getEventDate());
+        dataDTO.setHdfsFilePath(HdfsFilePath);
+        dataDTO.setTitle(Title);
+        dataDTO.setEventDate(EventDate);
         dataDTO.setDataType(0);
         dataDTO.setViews(0);
-        dataDTO.setLocation(earthQuakeVO.getLocation());
-        dataDTO.setDetailLocation(earthQuakeVO.getDetailLocation());
+        dataDTO.setLocation(Location);
+        dataDTO.setDetailLocation(DetailLocation);
         dataDTO.setManagerId("manager");
 
         return dataDTO;
     }
 
-    public EarthQuakeDTO buildEarthQuake(EarthQuakeVO earthQuakeVO) {
+    public EarthQuakeDTO buildEarthQuake() {
         EarthQuakeDTO earthQuakeDTO = new EarthQuakeDTO();
 
-        earthQuakeDTO.setLatitude(earthQuakeVO.getLatitude());
-        earthQuakeDTO.setLongtitude(earthQuakeVO.getLongtitude());
-        earthQuakeDTO.setScale(earthQuakeVO.getScale());
-        earthQuakeDTO.setMapImage(earthQuakeVO.MapImage);
-        earthQuakeDTO.setTimeSeries(earthQuakeVO.getTimeSeries());
-        earthQuakeDTO.setAdditionalData(earthQuakeVO.getAdditionalData());
-        earthQuakeDTO.setSensorInfo(earthQuakeVO.getSensorInfo());
+        earthQuakeDTO.setLatitude(Latitude);
+        earthQuakeDTO.setLongtitude(Longtitude);
+        earthQuakeDTO.setScale(Scale);
+        earthQuakeDTO.setMapImage(MapImage);
+        earthQuakeDTO.setTimeSeries(TimeSeries);
+        earthQuakeDTO.setAdditionalData(AdditionalData);
+        earthQuakeDTO.setSensorInfo(SensorInfo);
 
         return earthQuakeDTO;
+    }
+
+    public int getYear() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(EventDate);
+
+        return calendar.get(Calendar.YEAR);
     }
 
 }

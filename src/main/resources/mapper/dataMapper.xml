@@ -22,5 +22,14 @@
         select Id, DataType, Title, Location, EventDate, Views
         from DATA;
     </select>
+    <select id="findData" parameterType="Integer" resultType="Data">
+        select * from DATA where Id=#{dataId};
+    </select>
+    <select id="findEarthQuakeData" parameterType="Integer" resultType="EarthQuake">
+        select * from EARTHQUAKE_DATA where DataId=#{dataId};
+    </select>
+    <select id="findNormalData" parameterType="Integer" resultType="Normal">
+        select * from NORMAL_DATA where DataId=#{dataId};
+    </select>
 </mapper>
 

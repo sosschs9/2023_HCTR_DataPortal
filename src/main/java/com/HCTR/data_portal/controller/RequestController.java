@@ -5,6 +5,7 @@ import com.HCTR.data_portal.dto.RequestDTO;
 import com.HCTR.data_portal.service.RequestService;
 import com.HCTR.data_portal.vo.Response.DataList;
 import com.HCTR.data_portal.vo.Response.RequestItem;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/dataportal")
+@RequestMapping("/api")
 public class RequestController {
     private final RequestService requestService;
 

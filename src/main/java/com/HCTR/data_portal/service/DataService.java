@@ -15,9 +15,10 @@ import java.util.*;
 @RequiredArgsConstructor
 public class DataService {
     private final DataRepository dataRepository;
+
     public int uploadNormalVO(NormalVO normalVO){
-        DataDTO dataDTO = normalVO.buildData(normalVO);
-        NormalDTO normalDTO = normalVO.buildNormal(normalVO);
+        DataDTO dataDTO = normalVO.buildData();
+        NormalDTO normalDTO = normalVO.buildNormal();
 
         int DataId = dataRepository.findLastIndex() + 1;
         dataDTO.setId(DataId);
@@ -35,8 +36,8 @@ public class DataService {
         return DataId;
     }
     public int uploadEarthQuakeVO(EarthQuakeVO earthQuakeVO){
-        DataDTO dataDTO = earthQuakeVO.buildData(earthQuakeVO);
-        EarthQuakeDTO earthQuakeDTO = earthQuakeVO.buildEarthQuake(earthQuakeVO);
+        DataDTO dataDTO = earthQuakeVO.buildData();
+        EarthQuakeDTO earthQuakeDTO = earthQuakeVO.buildEarthQuake();
 
         int DataId = dataRepository.findLastIndex() + 1;
         dataDTO.setId(DataId);
@@ -57,7 +58,14 @@ public class DataService {
     public List<DataDTO> findAllData(){
         return dataRepository.findAllData();
     }
-
-
+    public DataDTO findData(int dataId) {
+        return dataRepository.findData(dataId);
+    }
+    public EarthQuakeDTO findEarthQuakeData(int dataId) {
+        return dataRepository.findEarthQuakeData(dataId);
+    }
+    public NormalDTO findNormalData(int dataId) {
+        return dataRepository.findNormalData(dataId);
+    }
 
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService{
     private final UserRepository userRepository;
 
     public int signup(UserDTO userDTO) {
@@ -25,7 +25,7 @@ public class UserService {
 
         userDTO = userRepository.checkPW(userDTO);
         if (userDTO == null) return -2;
-        else return userDTO.getId();
+        else return userDTO;
     }
 
 }
