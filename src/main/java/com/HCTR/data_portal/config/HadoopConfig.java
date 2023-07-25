@@ -8,7 +8,6 @@ import org.springframework.data.hadoop.config.annotation.builders.HadoopConfigCo
 @Configuration
 @EnableHadoop
 class HadoopConfig extends SpringHadoopConfigurerAdapter {
-
     @Override
     public void configure(HadoopConfigConfigurer config) throws Exception {
         config

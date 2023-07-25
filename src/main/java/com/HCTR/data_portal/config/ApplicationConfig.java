@@ -18,8 +18,8 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 // 어노테이션으로 트랜잭션을 관리하기 위해 @EnableTransactionManagement를 설정하였다.
 @Configuration
 @ComponentScan(basePackages = {"com.HCTR.data_portal.repository", "com.HCTR.data_portal.service"})
+@ComponentScan(basePackageClasses = HadoopConfig.class)
 @EnableTransactionManagement
-@Import(HadoopConfig.class)
 public class ApplicationConfig{
 
     @Bean
@@ -61,11 +61,5 @@ public class ApplicationConfig{
         resolver.setMaxUploadSize(10000000);
         return resolver;
     }
-
-    @Bean
-    public HadoopConfig hadoopConfig() {
-        return new HadoopConfig();
-    }
-
 }
 

@@ -15,7 +15,7 @@ import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/dataportal")
+@RequestMapping("/api")
 public class UserController {
     private final HttpSession httpSession;
     private final UserService userService;

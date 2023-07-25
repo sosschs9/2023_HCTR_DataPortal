@@ -54,27 +54,27 @@ public class NormalVO {
         this.EventDate = eventDate;
     }
 
-    public DataDTO buildData(NormalVO normalVO){
+    public DataDTO buildData(){
         DataDTO dataDTO = new DataDTO();
 
-        dataDTO.setHdfsFilePath(normalVO.getHdfsFilePath());
-        dataDTO.setTitle(normalVO.getTitle());
-        dataDTO.setEventDate(normalVO.getEventDate());
+        dataDTO.setHdfsFilePath(HdfsFilePath);
+        dataDTO.setTitle(Title);
+        dataDTO.setEventDate(EventDate);
         dataDTO.setDataType(1);
         dataDTO.setViews(0);
-        dataDTO.setLocation(normalVO.getLocation());
-        dataDTO.setDetailLocation(normalVO.getDetailLocation());
+        dataDTO.setLocation(Location);
+        dataDTO.setDetailLocation(DetailLocation);
         dataDTO.setManagerId("manager");
 
         return dataDTO;
     }
 
-    public NormalDTO buildNormal(NormalVO normalVO){
+    public NormalDTO buildNormal(){
         NormalDTO normalDTO = new NormalDTO();
 
-        normalDTO.setDescription(normalVO.getDescription());
-        normalDTO.setDescriptionImage(normalVO.getDescriptionImage());
-        normalDTO.setChart(normalVO.getChart());
+        normalDTO.setDescription(Description);
+        normalDTO.setDescriptionImage(DescriptionImage);
+        normalDTO.setChart(Chart);
 
         return normalDTO;
     }

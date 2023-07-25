@@ -35,22 +35,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/dataportal/signup").permitAll()
-                .antMatchers("/dataportal/data-earthquake", "/dataportal/data-normal").hasRole("MANAGER")
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/dataportal")
-                .usernameParameter("Id")
-                .passwordParameter("Password")
-                .loginProcessingUrl("/dataportal/signIn")
-                .failureForwardUrl("/dataportal")
-                .defaultSuccessUrl("/dataportal/data", true)
-                .permitAll()
-                .and()
-                .logout()
-                .logoutUrl("/dataportal/logout")
-                .logoutSuccessUrl("/dataportal");
+                .antMatchers("/dataportal/**").permitAll()
+                //.antMatchers("/dataportal/data-earthquake", "/dataportal/data-normal").hasRole("MANAGER")
+                .anyRequest().authenticated();
     }
 
     // 패스워드 인코더를 빈으로 등록합니다. 암호를 인코딩하거나,
