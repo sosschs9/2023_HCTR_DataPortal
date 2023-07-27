@@ -1,6 +1,5 @@
 package com.HCTR.data_portal.controller;
 
-import com.HCTR.data_portal.dto.DataDTO;
 import com.HCTR.data_portal.dto.RequestDTO;
 import com.HCTR.data_portal.service.RequestService;
 import com.HCTR.data_portal.vo.Response.DataList;
@@ -23,42 +22,36 @@ public class RequestController {
     @PostMapping("/request")
     public ResponseEntity<?> requestData(
             @RequestHeader("userId") String userId,
-            @RequestBody DataDTO dataDTO){
+            @RequestParam int dataId){
         System.out.println("Request Data");
         Map<String, Object> msg = new HashMap<>();
 
         // DB에 저장할 requestDTO 인스턴스 생성
-        RequestDTO requestDTO = requestService.buildRequest(userId, dataDTO);
-        int res = requestService.insertRequest(requestDTO);
+        RequestDTO requestDTO = requestService.buildRequest(userId, dataId);
+        if (requestDTO == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Already Requested");
 
+        int res = requestService.insertRequest(requestDTO);
         if (res > 0) {
             msg.put("RequestId", requestDTO.getId());
             return ResponseEntity.status(HttpStatus.OK).body(msg);
-        } else {
-            msg.put("Error", "Data Request Failure");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
-        }
+        } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Data Request Failure");
+
     }
     
     // 요청 승인하기 (관리자)
     @PutMapping("/request")
-    public ResponseEntity<?> acceptRequest(@RequestBody RequestDTO requestDTO){
+    public ResponseEntity<?> acceptRequest(@RequestParam int requestId){
         System.out.println("Accept Request");
-        Map<String, Object> msg = new HashMap<>();
+        String msg;
 
         // RequestId에 해당하는 요청 상태 Complete로 변경
-        int res = requestService.acceptRequest(requestDTO);
+        int res = requestService.acceptRequest(requestId);
 
-        if (res > 0) {
-            msg.put("RequestId", requestDTO.getId());
-            return ResponseEntity.status(HttpStatus.OK).body(msg);
-        } else if (res == -1){
-            msg.put("Error", "This Request Has Already Complete.");
-        } else if (res == -2) {
-            msg.put("Error", "This Request Has Been Expired.");
-        } else {
-            msg.put("Error", "Accept Request Failure");
-        }
+        if (res > 0) return ResponseEntity.status(HttpStatus.OK).body("Success");
+        else if (res == -1) msg = "Error: This Request Has Already Complete.";
+        else if (res == -2) msg = "Error: This Request Has Been Expired.";
+        else msg = "Error: Accept Request Failure";
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
     }
 
@@ -67,8 +60,6 @@ public class RequestController {
     @GetMapping("/request")
     public ResponseEntity<?> findAllRequest(@RequestHeader("userId") String userId) {
         System.out.println("Find All Request List");
-        Map<String, Object> msg = new HashMap<>();
-
         List<RequestItem> requestList = requestService.findAllRequestById(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(new DataList<>(requestList.size(), requestList));

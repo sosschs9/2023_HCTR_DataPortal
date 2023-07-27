@@ -3,6 +3,7 @@ package com.HCTR.data_portal.repository;
 import com.HCTR.data_portal.dto.RequestDTO;
 import com.HCTR.data_portal.vo.Response.RequestItem;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -20,13 +21,20 @@ public class RequestRepository {
     public int insertRequest(RequestDTO requestDTO) {
         return sql.insert("request.insertRequest", requestDTO);
     }
+    public boolean isAlreadyRequest(String userId, int dataId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("UserId", userId); params.put("DataId", dataId);
+        if (sql.selectOne("request.isAlreadyRequest", params) == null) return false;
+        else return true;
+    }
     public int acceptRequest(RequestDTO requestDTO) {
         return sql.update("request.acceptRequest", requestDTO);
     }
     public List<RequestItem> findAllRequest(){
         return sql.selectList("request.findAllRequest");
     }
-    public List<RequestItem> findAllRequestById(String userId) {
+    public RequestDTO findRequestById(int requestId) { return sql.selectOne("request.findRequestById", requestId); }
+    public List<RequestItem> findAllRequestByUser(String userId) {
         return sql.selectList("request.findAllRequestById", userId);
     }
 }

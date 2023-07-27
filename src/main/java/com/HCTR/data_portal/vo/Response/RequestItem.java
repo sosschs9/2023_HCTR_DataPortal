@@ -27,5 +27,4 @@ public class RequestItem {
         this.UserId = userId;
         this.ReqDate = reqDate;
     }
-
 }

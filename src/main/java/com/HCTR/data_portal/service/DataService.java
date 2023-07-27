@@ -6,6 +6,9 @@ import com.HCTR.data_portal.dto.NormalDTO;
 import com.HCTR.data_portal.repository.DataRepository;
 import com.HCTR.data_portal.vo.Request.EarthQuakeVO;
 import com.HCTR.data_portal.vo.Request.NormalVO;
+import com.HCTR.data_portal.vo.Response.EarthQuakeItem;
+import com.HCTR.data_portal.vo.Response.NormalItem;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -58,14 +61,37 @@ public class DataService {
     public List<DataDTO> findAllData(){
         return dataRepository.findAllData();
     }
-    public DataDTO findData(int dataId) {
-        return dataRepository.findData(dataId);
-    }
-    public EarthQuakeDTO findEarthQuakeData(int dataId) {
-        return dataRepository.findEarthQuakeData(dataId);
-    }
-    public NormalDTO findNormalData(int dataId) {
-        return dataRepository.findNormalData(dataId);
-    }
 
+    public Object findData(int dataId) {
+        // dataId로 dataDto 가져오기
+        DataDTO dataDTO = dataRepository.findData(dataId);
+        if (dataDTO == null) return null;
+        else dataRepository.countView(dataId);  // 불러온 객체가 있으면 view count + 1
+
+        String imgUrlRoot = "http://155.230.118.227:9000/dataportal";  // minIO 스토리지 서버 주소
+        if (dataDTO.getDataType() == 0) {
+            EarthQuakeDTO earthQuakeDTO = dataRepository.findEarthQuakeData(dataId);
+            // 클라이언트에게 전송할 객체 생성
+            EarthQuakeItem resItem =
+                    new EarthQuakeItem(
+                            dataDTO.getTitle(), dataDTO.getLocation(), dataDTO.getDetailLocation(),
+                            dataDTO.getEventDate(), earthQuakeDTO.getLatitude(), earthQuakeDTO.getLongtitude(),
+                            earthQuakeDTO.getScale(), earthQuakeDTO.getMapImage(), earthQuakeDTO.getTimeSeries()
+                    );
+            resItem.setUrl(imgUrlRoot);
+            return resItem;
+        }
+        else if(dataDTO.getDataType() == 1) {
+            NormalDTO normalDTO = dataRepository.findNormalData(dataId);
+            // 클라이언트에게 전송할 객체 생성
+            NormalItem resItem =
+                    new NormalItem(
+                            dataDTO.getTitle(), dataDTO.getLocation(), dataDTO.getDetailLocation(),
+                            dataDTO.getEventDate(), normalDTO.getDescription(),
+                            normalDTO.getDescriptionImage(), normalDTO.getChart());
+            resItem.setUrl(imgUrlRoot);
+            return resItem;
+        }
+        return null;
+    }
 }

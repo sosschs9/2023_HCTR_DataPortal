@@ -31,4 +31,5 @@ public class DataRepository {
     public DataDTO findData(int dataId) { return sql.selectOne("data.findData", dataId); }
     public EarthQuakeDTO findEarthQuakeData(int dataId) { return sql.selectOne("data.findEarthQuakeData", dataId); }
     public NormalDTO findNormalData(int dataId) { return sql.selectOne("data.findNormalData", dataId); }
+    public void countView(int dataId) { sql.update("data.countView", dataId); }
 }

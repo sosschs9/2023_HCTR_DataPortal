@@ -19,7 +19,7 @@
         values (#{Latitude}, #{Longtitude}, #{Scale}, #{MapImage}, #{TimeSeries}, #{AdditionalData}, #{SensorInfo}, #{DataId});
     </insert>
     <select id="findAllData" resultType="Data">
-        select Id, DataType, Title, Location, EventDate, Views
+        select *
         from DATA;
     </select>
     <select id="findData" parameterType="Integer" resultType="Data">
@@ -31,5 +31,8 @@
     <select id="findNormalData" parameterType="Integer" resultType="Normal">
         select * from NORMAL_DATA where DataId=#{dataId};
     </select>
+    <update id="countView" parameterType="Integer">
+        update DATA set Views = Views + 1 where Id=#{dataId};
+    </update>
 </mapper>
 

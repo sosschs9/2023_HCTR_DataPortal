@@ -3,34 +3,34 @@ package com.HCTR.data_portal.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class DataDTO {
     @JsonProperty("Id")
     private int Id;
+    @JsonProperty("DataType")
+    private int DataType;
     @JsonProperty("Title")
     private String Title;
-    @JsonProperty("HdfsFilePath")
-    private String HdfsFilePath;
     @JsonProperty("EventDate")
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private Date EventDate;
-    @JsonProperty("DataType")
-    private int DataType;
-    @JsonProperty("Views")
-    private int Views;
     @JsonProperty("Location")
     private String Location;
     @JsonProperty("DetailLocation")
     private String DetailLocation;
+    @JsonProperty("HdfsFilePath")
+    private String HdfsFilePath;
+    @JsonProperty("Views")
+    private int Views;
     @JsonProperty("ManagerId")
     private String ManagerId;
 
@@ -46,9 +46,5 @@ public class DataDTO {
         this.Location = location;
         this.DetailLocation = detailLocation;
         this.ManagerId = managerId;
-    }
-
-    public DataDTO() {
-
     }
 }

@@ -10,11 +10,18 @@
         insert into REQUEST
         values (#{Id}, #{ReqDate}, #{ReqStatus}, #{IsDownload}, #{UserId}, #{DataId}, #{ManagerId});
     </insert>
+    <select id="isAlreadyRequest" resultType="Request">
+        select * from REQUEST
+        where UserId=#{UserId} and DataId=#{DataId} and ReqStatus='Waiting';
+    </select>
     <update id="acceptRequest" parameterType="Request">
         update REQUEST
         set ReqStatus = "Complete"
         where Id = #{Id}
     </update>
+    <select id="findRequestById" parameterType="Integer" resultType="Request">
+        select * from REQUEST where Id=#{requestId};
+    </select>
     <select id="findAllRequest" resultType="RequestItem">
         select ReqStatus, DataId, DataType, Title, UserId, TO_CHAR(ReqDate, 'YYYY-MM-DD')
         from REQUEST left join DATA

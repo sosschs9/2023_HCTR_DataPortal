@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/dataportal/**").permitAll()
+                .antMatchers("/api/**").permitAll()
                 //.antMatchers("/dataportal/data-earthquake", "/dataportal/data-normal").hasRole("MANAGER")
                 .anyRequest().authenticated();
     }

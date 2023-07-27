@@ -99,4 +99,11 @@ public class EarthQuakeVO {
         return calendar.get(Calendar.YEAR);
     }
 
+    public void setHdfsPath(String rootPath, String mapImagePath, String timeSeriesPath, String sensorInfoPath) {
+        HdfsFilePath = rootPath;
+        MapImage = rootPath + '/' + mapImagePath;
+        TimeSeries = rootPath + '/' + timeSeriesPath;
+        SensorInfo = rootPath + '/' + sensorInfoPath;
+    }
+
 }

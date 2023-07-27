@@ -7,22 +7,25 @@ import com.HCTR.data_portal.vo.Request.EarthQuakeVO;
 import com.HCTR.data_portal.vo.Request.NormalVO;
 import com.HCTR.data_portal.vo.Response.DataList;
 
+import io.minio.*;
+import io.minio.errors.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StopWatch;
 
-import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping(value = "/api", produces = "application/json; charset=utf8")
 public class DataController {
-    private final HttpSession httpSession;
     private final DataService dataService;
     private final HdfsService hdfsService;
 
@@ -40,6 +43,7 @@ public class DataController {
 
         System.out.println("Upload EarthQuake Data");
         Map<String, Object> msg = new HashMap<>();
+        String errMsg;
 
         // 파일이 저장될 디렉토리 경로 설정 Ex. /EQ/2021/(데이터번호)_(지역이름)
         String filePath = "/EQ/" + earthQuakeVO.getYear() + "/" + hdfsService.countHdfsFile("/EQ/" + earthQuakeVO.getYear()) + "_" + earthQuakeVO.getLocation();
@@ -60,36 +64,32 @@ public class DataController {
                 String result = future.get();
                 System.out.println(result); // File upload completed
             } catch (InterruptedException | ExecutionException e) {
-                msg.put("Error", "Hdfs Upload Failure.");
+                errMsg = "Error: Hdfs Upload Failure.";
             }
         }
 
         // MariaDB에 저장하기 위한 멤버 변수 설정
-        earthQuakeVO.setHdfsFilePath(filePath);
-        earthQuakeVO.setMapImage(filePath + "/" + mapImage.getOriginalFilename());
-        earthQuakeVO.setTimeSeries(filePath + "/" + timeSeries.getOriginalFilename());
-        earthQuakeVO.setSensorInfo(filePath + "/" + sensorInfo.getOriginalFilename());
+        earthQuakeVO.setHdfsPath(filePath, mapImage.getOriginalFilename(), timeSeries.getOriginalFilename(), sensorInfo.getOriginalFilename());
 
         int result = dataService.uploadEarthQuakeVO(earthQuakeVO);
         if (result > 0) {
             // result => DataId를 가리킴
             msg.put("DataId", result);
+            // 실행 시간 확인
+            stopWatch.stop();
+            System.out.println(stopWatch.prettyPrint());
+
             return ResponseEntity.status(HttpStatus.CREATED).body(msg);
-        } else if (result == -1){
-            // Data DB 저장 오류
-            msg.put("Error", "Data Table Insert Failure.");
-        } else if (result == -2) {
-            // Normal DB 저장 오류
-            msg.put("Error", "EarthQuake_Data Table Insert Failure.");
-        } else {
-            msg.put("Error", "File Upload Fail. Check your data file");
         }
+        else if (result == -1) errMsg = "Error: Data Table Insert Failure.";
+        else if (result == -2) errMsg = "Error: EarthQuake_Data Table Insert Failure.";
+        else errMsg = "Error: File Upload Fail. Check your data file";
 
         // 실행 시간 확인
         stopWatch.stop();
         System.out.println(stopWatch.prettyPrint());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errMsg);
     }
 
     // 평시 데이터 저장하기
@@ -105,7 +105,6 @@ public class DataController {
 
         System.out.println(normalVO);
         int res = dataService.uploadNormalVO(normalVO);
-
 
         if (res > 0) {
             // result => DataId를 가리킴
@@ -129,10 +128,6 @@ public class DataController {
         System.out.println("Find Data List");
         List<DataDTO> dataList = dataService.findAllData();
 
-        if(httpSession.getAttribute("MANAGER") == null){
-            new Exception();
-        }
-
         return ResponseEntity.status(HttpStatus.OK).body(new DataList<>(dataList.size(), dataList));
     }
 
@@ -140,36 +135,45 @@ public class DataController {
     @GetMapping("/data/{DataId}")
     public ResponseEntity<?> findDataById(@PathVariable("DataId") int dataId){
         System.out.println("About Data Id: " + dataId);
-        // 제목, 위치, 상세 위치, 위도, 경도, 규모
-        // 맵, 시계열 이미지 파일 가져오기
-        // view 횟수 증가
 
-        // 아이디로 DataDTO 불러오기
-        // Data type 지진이면 지진DTO 불러오기, 평상시면 평시DTO 불러오기
-        DataDTO dataDTO = dataService.findData(dataId);
-        System.out.println(dataDTO);
+        Object res = dataService.findData(dataId);
+        if (res == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("올바르지 않은 접근입니다. 정상적인 경로로 다시 접속해 주세요");
+        else return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
 
-        if (dataDTO.getDataType() == 0){
-            EarthQuakeDTO earthQuakeDTO = dataService.findEarthQuakeData(dataId);
-            byte imageBytes[] = hdfsService.readImageFromHdfs(earthQuakeDTO.getMapImage());
-            Base64.Encoder encoder = Base64.getEncoder();
-            String base64Encode = "data:image/gif;base64," + encoder.encodeToString(imageBytes);
-            System.out.println(base64Encode);
+    @PostMapping("/minio")
+    public ResponseEntity<?> minioTest(@RequestPart("file") MultipartFile testFile) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+        try {
+            MinioClient minioClient =
+                    MinioClient.builder()
+                            .endpoint("http://155.230.118.227:9000")
+                            .credentials("minioadmin", "minioadmin")
+                            .build();
+            boolean found =
+                    minioClient.bucketExists(BucketExistsArgs.builder().bucket("dataportal").build());
+            if (!found) {
+                // Make a new bucket called 'dataportal'.
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket("dataportal").build());
+            } else {
+                System.out.println("Bucket 'dataportal' already exists.");
+            }
 
-            if (imageBytes != null){
-                HttpHeaders headers = new HttpHeaders();
-//                headers.setContentType(MediaType.IMAGE_GIF);
-//                headers.setContentLength(imageBytes.length);
+            String dataPath = "/EQ/2021/test/" + testFile.getOriginalFilename();
 
-                return new ResponseEntity<>(base64Encode, headers, HttpStatus.OK);
-            } else return ResponseEntity.notFound().build();
-        } else {
-            NormalDTO normalDTO = dataService.findNormalData(dataId);
+            minioClient.putObject(
+                    PutObjectArgs.builder().bucket("dataportal").object(dataPath).stream(
+                                    testFile.getInputStream(), testFile.getSize(), -1)
+                            .contentType(testFile.getContentType())
+                            .build());
+        } catch (MinioException e) {
+            System.out.println("Error occurred: " + e);
+            System.out.println("HTTP trace: " + e.httpTrace());
         }
-        return null;
+
+        return ResponseEntity.status(HttpStatus.OK).body("test Ok");
     }
 
 
     // 데이터 다운로드
-    // PUT /dataportal/mypage/data
+    // PUT /api/data
 }
