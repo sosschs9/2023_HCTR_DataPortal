@@ -1,6 +1,5 @@
 package com.HCTR.data_portal.controller;
 
-import com.HCTR.data_portal.dto.RequestDTO;
 import com.HCTR.data_portal.dto.UserDTO;
 import com.HCTR.data_portal.service.UserService;
 
@@ -23,50 +22,30 @@ public class UserController {
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@RequestBody UserDTO userDTO){
         System.out.println("SignUp User");
-        Map<String, Object> msg = new HashMap<>();
 
         int res = userService.signup(userDTO);
-        if (res > 0) {
-            msg.put("Success", res);
-            return ResponseEntity.status(HttpStatus.CREATED).body(msg);
-        } else {
-            msg.put("Error", "Signup Failure.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
-        }
+        if (res > 0) return ResponseEntity.status(HttpStatus.CREATED).body("Success");
+        else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Signup Failure");
     }
 
-    // String으로 넘겨주면 JSON 형식으로 못 받아옴
-    // HttpServletRequest 으로 받아와야하나? 아님 UserDTO ?
     @PostMapping("/signUp/email")
-    public ResponseEntity<?> checkEmail(@RequestBody String email){
+    public ResponseEntity<?> checkEmail(@RequestParam("Email") String email){
         // 이메일 중복 체크
         System.out.println("Check Email");
-        Map<String, Object> msg = new HashMap<>();
 
         boolean res = userService.checkEmail(email);
-        if (res) {
-            msg.put("Success", "This Email can be use");
-            return ResponseEntity.status(HttpStatus.OK).body(msg);
-        } else {
-            msg.put("Error", "This Email can NOT be use.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
-        }
+        if (res) return ResponseEntity.status(HttpStatus.OK).body("Success: This Email can be use");
+        else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: This Email can NOT be use.");
     }
 
     @PostMapping("signUp/id")
-    public ResponseEntity<?> checkId(@RequestBody String id) {
+    public ResponseEntity<?> checkId(@RequestParam("Id") String id) {
         // 아이디 중복 체크
         System.out.println("Check Id");
-        Map<String, Object> msg = new HashMap<>();
 
         boolean res = userService.checkId(id);
-        if (res) {
-            msg.put("Success", "This Id can be use");
-            return ResponseEntity.status(HttpStatus.OK).body(msg);
-        } else {
-            msg.put("Error", "This Id can NOT be use.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
-        }
+        if (res) return ResponseEntity.status(HttpStatus.OK).body("Success: This Id can be use");
+        else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: This Id can NOT be use.");
     }
 
     @PostMapping("/signIn")

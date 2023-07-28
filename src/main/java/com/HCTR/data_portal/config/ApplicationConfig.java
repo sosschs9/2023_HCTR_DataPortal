@@ -3,10 +3,11 @@ package com.HCTR.data_portal.config;
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -20,15 +21,24 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 @ComponentScan(basePackages = {"com.HCTR.data_portal.repository", "com.HCTR.data_portal.service"})
 @ComponentScan(basePackageClasses = HadoopConfig.class)
 @EnableTransactionManagement
+@PropertySource("classpath:config.properties")
 public class ApplicationConfig{
+    @Value("${spring.datasource.driverClassName}")
+    private String driverClassName;
+    @Value("${spring.datasource.url}")
+    private String url;
+    @Value("${spring.datasource.username}")
+    private String username;
+    @Value("${spring.datasource.password}")
+    private String password;
 
     @Bean
     public BasicDataSource dataSource() {
         BasicDataSource datasource = new BasicDataSource();
-        datasource.setDriverClassName("org.mariadb.jdbc.Driver");
-        datasource.setUrl("jdbc:mariadb://155.230.118.225:3306/dataportal");
-        datasource.setUsername("datadoctor");
-        datasource.setPassword("datadoctor1!2");
+        datasource.setDriverClassName(driverClassName);
+        datasource.setUrl(url);
+        datasource.setUsername(username);
+        datasource.setPassword(password);
 
         return datasource;
     }

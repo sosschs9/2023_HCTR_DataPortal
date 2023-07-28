@@ -1,13 +1,14 @@
 package com.HCTR.data_portal.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.lang.Nullable;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class NormalDTO{
     private int Id;
     private String Description;
@@ -24,6 +25,4 @@ public class NormalDTO{
         this.Chart = chart;
         this.DataId = dataId;
     }
-
-    public NormalDTO() {}
 }

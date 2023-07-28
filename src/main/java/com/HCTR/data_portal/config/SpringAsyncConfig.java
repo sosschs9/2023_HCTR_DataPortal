@@ -17,6 +17,7 @@ public class SpringAsyncConfig {
         taskExecutor.setMaxPoolSize(30); // 최대 스레드 수
         taskExecutor.setQueueCapacity(100); // Queue 사이즈
         taskExecutor.setThreadNamePrefix("Executor-");
+        taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
         return taskExecutor;
     }
 

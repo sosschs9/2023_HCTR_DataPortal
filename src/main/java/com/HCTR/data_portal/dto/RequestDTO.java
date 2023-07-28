@@ -1,19 +1,20 @@
 package com.HCTR.data_portal.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class RequestDTO {
     private int Id;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private Date ReqDate;
     private String ReqStatus;
     private boolean IsDownload;

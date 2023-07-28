@@ -2,8 +2,7 @@ package com.HCTR.data_portal.service;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.fs.permission.AclEntry;
 import org.apache.hadoop.fs.permission.AclEntryScope;
 import org.apache.hadoop.fs.permission.AclEntryType;
@@ -16,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -23,8 +24,9 @@ import java.util.Arrays;
 
 import java.util.concurrent.Future;
 
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.conf.Configuration;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @Service
@@ -33,6 +35,7 @@ public class HdfsService {
     @Autowired
     private Configuration hadoopConfiguration;
 
+    // 파일 업로드 (멀티 스레딩)
     @Async("threadPoolTaskExecutor")
     public Future<String> uploadHdfs(MultipartFile file, String fileDir) {
         try {
@@ -62,33 +65,74 @@ public class HdfsService {
             System.out.println(Thread.currentThread().getName() + ": Success file upload");
             return new AsyncResult<>("File upload completed");
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
 
-    public byte[] readImageFromHdfs(String filePath) {
+    // 다운로드 할 파일 Zip으로 압축해 클라이언트에게 전달
+    public void readHdfsFile(String dirPath, HttpServletResponse response) {
         try {
             System.out.println("search hdfs file");
             // Hdfs 파일 시스템 객체 생성
             FileSystem hdfs = FileSystem.get(hadoopConfiguration);
-            // 파일 경로 생성
-            Path path = new Path(filePath);
-            // 파일 존재 여부 확인
-            if (!hdfs.exists(path)) {
-                System.out.println("해당 이미지 파일이 존재하지 않습니다: " + filePath);
-                return null;
+            // 디렉토리 경로 생성
+            Path directory = new Path(dirPath);
+            // 디렉토리 존재 여부 확인
+            if (!hdfs.exists(directory)) {
+                System.out.println("해당 디렉토리가 존재하지 않습니다: " + dirPath);
+                return;
             }
 
-            InputStream inputStream = hdfs.open(path);
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            OutputStream fos = response.getOutputStream();
+            ZipOutputStream zipOut = new ZipOutputStream(fos);
 
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, bytesRead);
+            // 디렉토리 내에 있는 파일 목록 가져오기
+            RemoteIterator<FileStatus> fileStatusIterator = hdfs.listStatusIterator(directory);
+            while (fileStatusIterator.hasNext()) {
+                FileStatus fileStatus = fileStatusIterator.next();
+                if (fileStatus.isFile()) {
+                    Path filePath = fileStatus.getPath();
+                    System.out.println("파일명: " + filePath.getName());
+
+                    // 파일을 읽어오는 로직을 추가하면 됨
+                    InputStream inputStream = hdfs.open(filePath);
+                    ZipEntry zipEntry = new ZipEntry(filePath.getName());
+                    zipOut.putNextEntry(zipEntry);
+
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) > 0) {
+                        zipOut.write(buffer, 0, bytesRead);
+                    }
+                    inputStream.close();
+                }
             }
-            return outputStream.toByteArray();
+            zipOut.close();
+            fos.close();
+        } catch (IOException e) {
+            log.error("hdfs IOException. message: {}", e.getMessage());
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    // 해당 경로에 저장된 파일디렉토리 몇개있는지 (현재 디렉토리도 포함됨)
+    public long countHdfsFile(String filePath) {
+        try {
+            FileSystem hdfs = FileSystem.get(hadoopConfiguration);
+            Path _filePath = new Path(filePath);
+
+            if (!hdfs.exists(_filePath)) {
+                throw new Exception("Not Exist hdfs file");
+            }
+
+            long fileCount = hdfs.getContentSummary(_filePath).getDirectoryCount();
+            System.out.println("Total number of directory: " + fileCount);
+            hdfs.close();
+
+            return fileCount;
         } catch (IOException e) {
             log.error("hdfs IOException. message: {}", e.getMessage());
             throw new RuntimeException(e);
@@ -115,27 +159,5 @@ public class HdfsService {
         // ACL 설정
         fs.modifyAclEntries(path, Arrays.asList(new AclEntry[]{aclEntry}));
         System.out.println("ACL 설정이 완료되었습니다.");
-    }
-
-    public long countHdfsFile(String filePath) {
-        try {
-            FileSystem hdfs = FileSystem.get(hadoopConfiguration);
-            Path _filePath = new Path(filePath);
-
-            if (!hdfs.exists(_filePath)) {
-                throw new Exception("Not Exist hdfs file");
-            }
-
-            long fileCount = hdfs.getContentSummary(_filePath).getDirectoryCount();
-            System.out.println("Total number of directory: " + fileCount);
-            hdfs.close();
-
-            return fileCount;
-        } catch (IOException e) {
-            log.error("hdfs IOException. message: {}", e.getMessage());
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }

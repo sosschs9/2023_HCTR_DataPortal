@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 
 @Getter
@@ -77,5 +78,18 @@ public class NormalVO {
         normalDTO.setChart(Chart);
 
         return normalDTO;
+    }
+
+    public int getYear() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(EventDate);
+
+        return calendar.get(Calendar.YEAR);
+    }
+
+    public void setHdfsPath(String rootPath, String descriptionImagePath, String chartPath) {
+        HdfsFilePath = rootPath;
+        DescriptionImage = rootPath + '/' + descriptionImagePath;
+        Chart = rootPath + '/' + chartPath;
     }
 }

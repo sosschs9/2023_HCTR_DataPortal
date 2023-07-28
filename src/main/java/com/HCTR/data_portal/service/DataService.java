@@ -6,6 +6,9 @@ import com.HCTR.data_portal.dto.NormalDTO;
 import com.HCTR.data_portal.repository.DataRepository;
 import com.HCTR.data_portal.vo.Request.EarthQuakeVO;
 import com.HCTR.data_portal.vo.Request.NormalVO;
+import com.HCTR.data_portal.vo.Response.EarthQuakeItem;
+import com.HCTR.data_portal.vo.Response.NormalItem;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,7 @@ import java.util.*;
 public class DataService {
     private final DataRepository dataRepository;
 
+    // 평시 데이터 업로드하기
     public int uploadNormalVO(NormalVO normalVO){
         DataDTO dataDTO = normalVO.buildData();
         NormalDTO normalDTO = normalVO.buildNormal();
@@ -35,6 +39,7 @@ public class DataService {
         // 업로드 성공
         return DataId;
     }
+    // 지진 데이터 업로드하기
     public int uploadEarthQuakeVO(EarthQuakeVO earthQuakeVO){
         DataDTO dataDTO = earthQuakeVO.buildData();
         EarthQuakeDTO earthQuakeDTO = earthQuakeVO.buildEarthQuake();
@@ -54,18 +59,45 @@ public class DataService {
         // 업로드 성공
         return DataId;
     }
-
+    // 모든 데이터 불러오기
     public List<DataDTO> findAllData(){
         return dataRepository.findAllData();
     }
-    public DataDTO findData(int dataId) {
-        return dataRepository.findData(dataId);
+    // 아이디 검색을 통한 데이터 불러오기
+    public DataDTO findDataById(int dataId){
+        return dataRepository.findDataById(dataId);
     }
-    public EarthQuakeDTO findEarthQuakeData(int dataId) {
-        return dataRepository.findEarthQuakeData(dataId);
-    }
-    public NormalDTO findNormalData(int dataId) {
-        return dataRepository.findNormalData(dataId);
-    }
+    // 데이터 상세조회
+    public Object viewDetailData(int dataId) {
+        // dataId로 dataDto 가져오기
+        DataDTO dataDTO = dataRepository.findDataById(dataId);
+        if (dataDTO == null) return null;
+        else dataRepository.countView(dataId);  // 불러온 객체가 있으면 view count + 1
 
+        String imgUrlRoot = "http://155.230.118.227:9000/dataportal";  // minIO 스토리지 서버 주소
+        if (dataDTO.getDataType() == 0) {
+            EarthQuakeDTO earthQuakeDTO = dataRepository.findEarthQuakeData(dataId);
+            // 클라이언트에게 전송할 객체 생성
+            EarthQuakeItem resItem =
+                    new EarthQuakeItem(
+                            dataDTO.getTitle(), dataDTO.getLocation(), dataDTO.getDetailLocation(),
+                            dataDTO.getEventDate(), earthQuakeDTO.getLatitude(), earthQuakeDTO.getLongtitude(),
+                            earthQuakeDTO.getScale(), earthQuakeDTO.getMapImage(), earthQuakeDTO.getTimeSeries()
+                    );
+            resItem.setUrl(imgUrlRoot);
+            return resItem;
+        }
+        else if(dataDTO.getDataType() == 1) {
+            NormalDTO normalDTO = dataRepository.findNormalData(dataId);
+            // 클라이언트에게 전송할 객체 생성
+            NormalItem resItem =
+                    new NormalItem(
+                            dataDTO.getTitle(), dataDTO.getLocation(), dataDTO.getDetailLocation(),
+                            dataDTO.getEventDate(), normalDTO.getDescription(),
+                            normalDTO.getDescriptionImage(), normalDTO.getChart());
+            resItem.setUrl(imgUrlRoot);
+            return resItem;
+        }
+        return null;
+    }
 }
