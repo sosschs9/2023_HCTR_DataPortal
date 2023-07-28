@@ -22,7 +22,7 @@
         select *
         from DATA;
     </select>
-    <select id="findData" parameterType="Integer" resultType="Data">
+    <select id="findDataById" parameterType="Integer" resultType="Data">
         select * from DATA where Id=#{dataId};
     </select>
     <select id="findEarthQuakeData" parameterType="Integer" resultType="EarthQuake">

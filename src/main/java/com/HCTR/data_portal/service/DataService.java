@@ -19,6 +19,7 @@ import java.util.*;
 public class DataService {
     private final DataRepository dataRepository;
 
+    // 평시 데이터 업로드하기
     public int uploadNormalVO(NormalVO normalVO){
         DataDTO dataDTO = normalVO.buildData();
         NormalDTO normalDTO = normalVO.buildNormal();
@@ -38,6 +39,7 @@ public class DataService {
         // 업로드 성공
         return DataId;
     }
+    // 지진 데이터 업로드하기
     public int uploadEarthQuakeVO(EarthQuakeVO earthQuakeVO){
         DataDTO dataDTO = earthQuakeVO.buildData();
         EarthQuakeDTO earthQuakeDTO = earthQuakeVO.buildEarthQuake();
@@ -57,14 +59,18 @@ public class DataService {
         // 업로드 성공
         return DataId;
     }
-
+    // 모든 데이터 불러오기
     public List<DataDTO> findAllData(){
         return dataRepository.findAllData();
     }
-
-    public Object findData(int dataId) {
+    // 아이디 검색을 통한 데이터 불러오기
+    public DataDTO findDataById(int dataId){
+        return dataRepository.findDataById(dataId);
+    }
+    // 데이터 상세조회
+    public Object viewDetailData(int dataId) {
         // dataId로 dataDto 가져오기
-        DataDTO dataDTO = dataRepository.findData(dataId);
+        DataDTO dataDTO = dataRepository.findDataById(dataId);
         if (dataDTO == null) return null;
         else dataRepository.countView(dataId);  // 불러온 객체가 있으면 view count + 1
 

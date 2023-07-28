@@ -1,6 +1,5 @@
 package com.HCTR.data_portal.controller;
 
-import com.HCTR.data_portal.dto.RequestDTO;
 import com.HCTR.data_portal.dto.UserDTO;
 import com.HCTR.data_portal.service.UserService;
 

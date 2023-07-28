@@ -15,9 +15,7 @@
         where UserId=#{UserId} and DataId=#{DataId} and ReqStatus='Waiting';
     </select>
     <update id="acceptRequest" parameterType="Request">
-        update REQUEST
-        set ReqStatus = "Complete"
-        where Id = #{Id}
+        update REQUEST set ReqStatus = "Complete" where Id = #{Id}
     </update>
     <select id="findRequestById" parameterType="Integer" resultType="Request">
         select * from REQUEST where Id=#{requestId};
@@ -33,5 +31,8 @@
         on REQUEST.DataId = DATA.Id
         where UserId = #{userId};
     </select>
+    <update id="downloadData" parameterType="Integer">
+        update REQUEST set IsDownload=true where Id=#{requestId}
+    </update>
 
 </mapper>

@@ -35,7 +35,6 @@ public class RequestController {
             msg.put("RequestId", requestDTO.getId());
             return ResponseEntity.status(HttpStatus.OK).body(msg);
         } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Data Request Failure");
-
     }
     
     // 요청 승인하기 (관리자)
@@ -60,7 +59,7 @@ public class RequestController {
     @GetMapping("/request")
     public ResponseEntity<?> findAllRequest(@RequestHeader("userId") String userId) {
         System.out.println("Find All Request List");
-        List<RequestItem> requestList = requestService.findAllRequestById(userId);
+        List<RequestItem> requestList = requestService.findAllRequestByUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(new DataList<>(requestList.size(), requestList));
     }

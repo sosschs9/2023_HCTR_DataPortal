@@ -37,4 +37,7 @@ public class RequestRepository {
     public List<RequestItem> findAllRequestByUser(String userId) {
         return sql.selectList("request.findAllRequestById", userId);
     }
+    public void downloadData(int requestId) {
+        sql.update("request.downloadData", requestId);
+    }
 }
