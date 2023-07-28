@@ -8,7 +8,6 @@ import com.HCTR.data_portal.vo.Request.EarthQuakeVO;
 import com.HCTR.data_portal.vo.Request.NormalVO;
 import com.HCTR.data_portal.vo.Response.EarthQuakeItem;
 import com.HCTR.data_portal.vo.Response.NormalItem;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

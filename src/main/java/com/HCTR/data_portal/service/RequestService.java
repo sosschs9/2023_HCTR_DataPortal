@@ -1,6 +1,5 @@
 package com.HCTR.data_portal.service;
 
-import com.HCTR.data_portal.dto.DataDTO;
 import com.HCTR.data_portal.dto.RequestDTO;
 import com.HCTR.data_portal.repository.RequestRepository;
 import com.HCTR.data_portal.repository.UserRepository;
@@ -32,6 +31,7 @@ public class RequestService {
     // 요청 승인
     public int acceptRequest(int requestId) {
         RequestDTO requestDTO = requestRepository.findRequestById(requestId);
+        if (requestDTO == null) return -3;
         // 현재 요청 상태 검사
         String nowStatus = requestDTO.getReqStatus();
         if (nowStatus.equals("Complete"))
